@@ -28,7 +28,7 @@ export class UsersController {
   updateUser(
     @Body() body: { username: string; email: string; password: string },
   ) {
-    return this.userService.updateUser(body);
+    return this.userService.updateUser(body.username, body.email, body.password, body);
   }
 
   @Delete('/users/:username')
