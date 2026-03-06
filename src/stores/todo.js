@@ -11,8 +11,8 @@ export const useTodoStore = defineStore("todo", {
   actions: {
     async fetchTodos() {
       try {
-        const response = await axios.get("http://localhost:3100/tasks");
-        this.todos = response.data;
+         const response = await axios.get("http://localhost:3100/tasks");
+         this.todos = response.data;
       } catch (error) {
         console.error("Failed to fetch todos:", error);
       }
