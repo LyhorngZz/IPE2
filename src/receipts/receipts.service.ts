@@ -1,14 +1,21 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { UpdateReceiptDto } from "./dto/update-receipt.dto";
 import { Receipt } from "./receipts.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateReceiptDto } from "./dto/create-receipt.dto";
+import { privateDecrypt } from "crypto";
+import { ClientProxy } from "@nestjs/microservices";
 
 @Injectable()
 export class ReceiptsService{
     constructor(@InjectRepository(Receipt)
-                private readonly receiptRepo: Repository<Receipt>,){}
+                private readonly receiptRepo: Repository<Receipt>,
+
+                @Inject('RABBITMQ_SERVICE')
+                private readonly client: ClientProxy,
+    ){}
+
     async findAll(){
         return this.receiptRepo.find({order: {issuedAt: 'DESC'}});
     }
@@ -25,7 +32,11 @@ export class ReceiptsService{
             name: dto.name,
             price: dto.price,
         });
-        return this.receiptRepo.save(receipt);
+
+        const saved = await this.receiptRepo.save(receipt);
+        this.client.emit('receipt.created', saved);
+        return saved;
+        // return this.receiptRepo.save(receipt);
     }
 
     async update(receiptId: string, dto: UpdateReceiptDto){

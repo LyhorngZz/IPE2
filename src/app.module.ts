@@ -3,17 +3,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ReceiptsModule } from './receipts/receipts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Receipt } from './receipts/receipts.entity';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
+  imports: [
+  TypeOrmModule.forRoot({
     type: 'postgres',
-    host: 'localhost',
+    host: process.env.DB_HOST,
     port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'nestjs_db',
-    entities: [Receipt],
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    autoLoadEntities: true,
     synchronize: true,
   }),
   ReceiptsModule
