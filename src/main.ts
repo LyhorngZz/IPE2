@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as dotenv from 'dotenv';
+//import * as dotenv from 'dotenv';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { ApiKeyGuard } from './common/guards/api-key.guard';
 
-dotenv.config();
+//dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
