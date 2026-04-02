@@ -9,7 +9,7 @@ export class OrdersService {
     constructor(
         @Inject('RABBITMQ_SERVICE') private client: ClientProxy,
 
-        @Inject(forwardRef(() => NotificationsService))
+        //@Inject(forwardRef(() => NotificationsService))
         private readonly notifications: NotificationsService,
     ) { }
 
