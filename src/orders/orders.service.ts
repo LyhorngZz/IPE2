@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { NotificationsService } from 'src/notifications/notifications.service';
 
@@ -8,6 +8,8 @@ export class OrdersService {
 
     constructor(
         @Inject('RABBITMQ_SERVICE') private client: ClientProxy,
+
+        @Inject(forwardRef(() => NotificationsService))
         private readonly notifications: NotificationsService,
     ) { }
 
@@ -31,10 +33,10 @@ export class OrdersService {
         this.orders.push(order);
 
         //RabbitMQ event
-        this.client.emit('order_created', {
-            order,
-            createdAt: new Date().toISOString(),
-        });
+        // this.client.emit('order_created', {
+        //     order,
+        //     createdAt: new Date().toISOString(),
+        // });
 
         //Notification
         this.notifications.notify('order_created', { order });
