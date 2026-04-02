@@ -6,27 +6,31 @@ import { Repository } from "typeorm";
 import { CreateReceiptDto } from "./dto/create-receipt.dto";
 import { privateDecrypt } from "crypto";
 import { ClientProxy } from "@nestjs/microservices";
+import { NotificationsService } from "src/notifications/notifications.service";
 
 @Injectable()
-export class ReceiptsService{
+export class ReceiptsService {
     constructor(@InjectRepository(Receipt)
-                private readonly receiptRepo: Repository<Receipt>,
+    private readonly receiptRepo: Repository<Receipt>,
 
-                @Inject('RABBITMQ_SERVICE')
-                private readonly client: ClientProxy,
-    ){}
+        @Inject('RABBITMQ_SERVICE')
+        private readonly client: ClientProxy,
 
-    async findAll(){
-        return this.receiptRepo.find({order: {issuedAt: 'DESC'}});
+        //Inject notification service
+        private readonly notifications: NotificationsService,
+    ) { }
+
+    async findAll() {
+        return this.receiptRepo.find({ order: { issuedAt: 'DESC' } });
     }
 
-    async findOne(receiptId: string){
-        const receipt = await this.receiptRepo.findOne({where: {receiptId}});
+    async findOne(receiptId: string) {
+        const receipt = await this.receiptRepo.findOne({ where: { receiptId } });
         if (!receipt) throw new NotFoundException('Receip not found');
         return receipt;
     }
 
-    async create(dto: CreateReceiptDto){
+    async create(dto: CreateReceiptDto) {
         const receipt = this.receiptRepo.create({
             issuedAt: new Date(dto.issuedAt),
             name: dto.name,
@@ -35,23 +39,29 @@ export class ReceiptsService{
 
         const saved = await this.receiptRepo.save(receipt);
         this.client.emit('receipt.created', saved);
+
+        // Use notification
+        this.notifications.notify('receipt_created', {
+            receiptId: saved.receiptId,
+            price: saved.price,
+        });
         return saved;
         // return this.receiptRepo.save(receipt);
     }
 
-    async update(receiptId: string, dto: UpdateReceiptDto){
+    async update(receiptId: string, dto: UpdateReceiptDto) {
         const receipt = await this.findOne(receiptId);
 
-        if(dto.issuedAt !== undefined) receipt.issuedAt = new Date(dto.issuedAt);
-        if(dto.name !== undefined) receipt.name = dto.name;
-        if(dto.price !== undefined) receipt.price = dto.price;
+        if (dto.issuedAt !== undefined) receipt.issuedAt = new Date(dto.issuedAt);
+        if (dto.name !== undefined) receipt.name = dto.name;
+        if (dto.price !== undefined) receipt.price = dto.price;
 
         return this.receiptRepo.save(receipt);
     }
 
-    async remove(receiptId: string){
+    async remove(receiptId: string) {
         const receipt = await this.findOne(receiptId);
         await this.receiptRepo.remove(receipt);
-        return {delete: true, receiptId};
+        return { delete: true, receiptId };
     }
 }

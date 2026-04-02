@@ -4,6 +4,7 @@ import { ReceiptsController } from "./receipts.controller";
 import { ReceiptsService } from "./receipts.service";
 import { Receipt } from "./receipts.entity";
 import { ClientsModule, Transport } from "@nestjs/microservices";
+import { NotificationsModule } from "src/notifications/notifications.module";
 
 @Module({
     imports: [
@@ -21,8 +22,9 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
                 },
             },
         ]),
+        NotificationsModule,
     ],
     controllers: [ReceiptsController],
     providers: [ReceiptsService],
 })
-export class ReceiptsModule {}
+export class ReceiptsModule { }
