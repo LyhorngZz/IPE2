@@ -18,8 +18,13 @@ export class NotificationsService {
         private readonly publisher: EventPublisher,
     ) { }
 
+    // notify(event: string, payload: any) {
+    //     console.log(`[NOTIFY] ${event}`, payload);
+    //     return { ok: true };
+    // }
+
     notify(event: string, payload: any) {
-        console.log(`[NOTIFY] ${event}`, payload);
+        this.publisher.publish(event, payload);
         return { ok: true };
     }
 }
