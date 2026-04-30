@@ -10,15 +10,17 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { GraphqlModule } from './graphql/graphql.module';
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
-      //typePaths: [join(process.cwd(), 'src/graphql/schema/*.graphql')],
-      autoSchemaFile: true,
+      typePaths: [join(process.cwd(), 'src/graphql/schema/*.graphql')],
+      //autoSchemaFile: true,
       playground: true,
-      introspection: true,
+      //introspection: true,
     }),
     //GraphQLModule,
     TypeOrmModule.forRoot({
@@ -36,6 +38,8 @@ import { GraphqlModule } from './graphql/graphql.module';
     OrdersModule,
     CoreModule,
     GraphqlModule,
+    CategoryModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
