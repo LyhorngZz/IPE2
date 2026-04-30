@@ -17,8 +17,9 @@ import { ProductModule } from './product/product.module';
   imports: [
     GraphQLModule.forRoot({
       driver: ApolloDriver,
-      typePaths: [join(process.cwd(), 'src/graphql/schema/*.graphql')],
+      //typePaths: [join(process.cwd(), 'src/graphql/schema/*.graphql')],
       //autoSchemaFile: true,
+      autoSchemaFile: join(process.cwd(), 'src/graphql/schema.gql'),
       playground: true,
       //introspection: true,
     }),
