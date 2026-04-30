@@ -6,6 +6,9 @@ services:
     container_name: nest_app
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
     depends_on:
       - db
       - rabbitmq

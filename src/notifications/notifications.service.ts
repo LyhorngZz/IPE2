@@ -18,7 +18,7 @@ export class NotificationsService {
     //     return { ok: true };
     // }
     constructor(
-        @Inject(EVENT_PUBLISHER)
+        @Inject("hh")
         private readonly publisher: EventPublisher,
     ) { }
 
