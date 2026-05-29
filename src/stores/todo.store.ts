@@ -8,6 +8,7 @@ import {
     ADD_TODO,
     TOGGLE_TODO,
     DELETE_TODO,
+    SUB_TODO,
 } from '@/graphql/todos'
 
 export type Todo = {
@@ -59,6 +60,23 @@ export const useTodoStore = defineStore('todo', () => {
         })
 
         await fetchTodos()
+    }
+
+    function startRealtime() {
+        const obs = apolloClient.subscribe<{ todos: Todo[] }>({
+            query: SUB_TODO,
+        })
+
+        const sub = obs.subscribe({
+            next: ({ data }) => {
+                if (data?.todos) todos.value = data.todos
+            },
+            error: (e) => {
+                console.error('Subscription error', e)
+            },
+        })
+
+        return () => sub.unsubscribe()
     }
 
     return {

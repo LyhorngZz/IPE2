@@ -41,3 +41,14 @@ export const DELETE_TODO = gql`
     }
   }
 `
+
+export const SUB_TODO = gql`
+  subscription TodosSub {
+    todos(order_by: { created_at: asc}) {
+      id
+      title
+      is_done
+      created_at
+    }
+  }
+`

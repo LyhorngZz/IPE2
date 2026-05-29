@@ -96,11 +96,14 @@ input {
 
 button {
   padding: 10px 16px;
-
+  background: #08f533;
   border: none;
   border-radius: 6px;
-
   cursor: pointer;
+}
+
+button:hover {
+  background: #7a7a7a;
 }
 
 .todo-list {
